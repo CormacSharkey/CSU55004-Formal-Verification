@@ -2,15 +2,18 @@ method isPrefix( pre:string, str:string) returns (res:bool)
 {
     if(|pre| <= |str|) // if pre is smaller then str cont
     {
-        // for the lengeth of the pre string do: 
+        // for the length of the pre string do: 
         // compare each slice to  see if they match
 
-        // if they dmatch continue 
+        // if they match continue 
         //else return false
         var str_slice := str[0..|pre|];
         if(pre == str_slice) // if the letters
         {
-            return res:= 1;
-        } 
+            res := true;
+            return res;
+        }
     }
+    res := false;
+    return res;
 }
