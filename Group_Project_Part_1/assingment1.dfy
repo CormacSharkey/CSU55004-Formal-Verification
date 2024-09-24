@@ -17,3 +17,18 @@ method isPrefix( pre:string, str:string) returns (res:bool)
     res := false;
     return res;
 }
+
+method isSubstring(sub: string, str: string) returns (res:bool)
+{
+    // var lenA := |sub|;
+    // var lenB := |str|;
+
+    if (|sub| <= |str|) // if sub is smaller than str cont 
+    {    
+        // get the difference of the two strings + 1 to determine the no. of iterations
+        var dif:= (|str| - |sub|) + 1;
+        var i := 0
+        forall k: int :: 0 <= k <dif 
+    }
+
+}
