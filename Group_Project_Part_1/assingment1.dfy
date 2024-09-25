@@ -43,3 +43,32 @@ method isSubstring(sub: string, str: string) returns (res:bool)
     res := false;
     return res;
 }
+
+method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: bool)
+    // ensures k <= |str1|
+    // ensures k <= |str2|
+{
+    if (k <= |str1|) && ( k <= |str2|)
+    {
+        var i := 0;
+        while i < (|str1| - k + 1)
+        {
+            found := isSubstring(str1[i..i+k-1], str2);
+            if (found == true)
+            {
+                return found;
+            }
+            i := i + 1;
+            // check the slice of str1 (sub) is in str2
+            // if it is, return true
+            // if not, check the next slice of str1  
+
+        } 
+    }
+    found := false;
+    return found;
+    // is K > the|n l2|
+    // is K > then len of str1 and 2  of str1 and 2 
+    // then break
+    //
+}
