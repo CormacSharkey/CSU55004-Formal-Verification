@@ -26,9 +26,20 @@ method isSubstring(sub: string, str: string) returns (res:bool)
     if (|sub| <= |str|) // if sub is smaller than str cont 
     {    
         // get the difference of the two strings + 1 to determine the no. of iterations
-        var dif:= (|str| - |sub|) + 1;
-        var i := 0
-        forall k: int :: 0 <= k <dif 
+        var dif := (|str| - |sub|) + 1;
+        
+        var i := 0;
+        while i < dif
+        {
+            res := isPrefix(sub, str[i..]);
+            i := i + 1;
+            if res == true 
+            {
+                return res;
+            }
+        }
+        
     }
-
+    res := false;
+    return res;
 }
