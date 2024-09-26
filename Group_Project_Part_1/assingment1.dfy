@@ -48,7 +48,7 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
     // ensures k <= |str1|
     // ensures k <= |str2|
 {
-    if (k <= |str1|) && ( k <= |str2|)
+    if (k <= |str1|) && ( k <= |str2|) && (k >= 1)
     {
         var i := 0;
         while i < (|str1| - k + 1)
@@ -71,4 +71,27 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
     // is K > then len of str1 and 2  of str1 and 2 
     // then break
     //
+}
+
+method maxCommonSubstringLength(str1: string, str2: string) returns (len: nat)
+{
+
+    // get size of str
+    // make a while loop and iterate till 0 or when have common k string returns a false
+    //keep recording the size 
+    //when it breaks return size as len
+    var flag := true;
+    var size := |str1|;
+
+
+    while (size >=0 )
+    {
+        flag := haveCommonKSubstring(size,str1, str2);
+        if (flag == true) {
+            return size;
+        }
+        size:= size -1;
+    }
+    return 0; // size will therefor be 0 so nothing was in common
+
 }
