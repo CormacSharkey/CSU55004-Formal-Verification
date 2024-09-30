@@ -11,11 +11,11 @@ method isPrefix( pre:string, str:string) returns (res:bool)
         if(pre == str_slice) // if the letters
         {
             res := true;
-            return res;
+            return;
         }
     }
     res := false;
-    return res;
+    return;
 }
 
 method isSubstring(sub: string, str: string) returns (res:bool)
@@ -35,13 +35,13 @@ method isSubstring(sub: string, str: string) returns (res:bool)
             i := i + 1;
             if res == true 
             {
-                return res;
+                return;
             }
         }
         
     }
     res := false;
-    return res;
+    return;
 }
 
 method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: bool)
@@ -56,7 +56,7 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
             found := isSubstring(str1[i..i+k-1], str2);
             if (found == true)
             {
-                return found;
+                return;
             }
             i := i + 1;
             // check the slice of str1 (sub) is in str2
@@ -66,11 +66,10 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
         } 
     }
     found := false;
-    return found;
+    return;
     // is K > the|n l2|
     // is K > then len of str1 and 2  of str1 and 2 
     // then break
-    //
 }
 
 method maxCommonSubstringLength(str1: string, str2: string) returns (len: nat)
@@ -80,18 +79,28 @@ method maxCommonSubstringLength(str1: string, str2: string) returns (len: nat)
     // make a while loop and iterate till 0 or when have common k string returns a false
     //keep recording the size 
     //when it breaks return size as len
-    var flag := true;
+    var flag := false;
     var size := |str1|;
 
 
     while (size >=0 )
     {
-        flag := haveCommonKSubstring(size,str1, str2);
+        flag := haveCommonKSubstring(size, str1, str2);
         if (flag == true) {
-            return size;
+            len := size;
+            return;
         }
-        size:= size -1;
+        size := size - 1;
     }
-    return 0; // size will therefor be 0 so nothing was in common
+    len := 0;
+    return; // size will therefor be 0 so nothing was in common
+}
 
+method Main() {
+    
+    var str1 := "hello world";
+    var str2 := "world";
+    var str3 := "earth";
+
+    
 }
