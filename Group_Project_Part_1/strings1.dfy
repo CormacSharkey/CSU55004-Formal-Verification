@@ -1,45 +1,53 @@
 method isPrefix( pre:string, str:string) returns (res:bool)
 {
-    if(|pre| <= |str|) // if pre is smaller then str cont
+    // check if the prefix is smaller than string, if so, continue
+    if(|pre| <= |str|)
     {
-        // for the length of the pre string do: 
-        // compare each slice to  see if they match
-
-        // if they match continue 
-        //else return false
+        // store the prefix length slice of string
         var str_slice := str[0..|pre|];
-        if(pre == str_slice) // if the letters
+
+        // if the prefix matches the slice of string, return true
+        if(pre == str_slice)
         {
             res := true;
             return res;
         }
     }
+    // else, return false
     res := false;
     return res;
 }
 
 method isSubstring(sub: string, str: string) returns (res:bool)
 {
-    // var lenA := |sub|;
-    // var lenB := |str|;
-
-    if (|sub| <= |str|) // if sub is smaller than str cont 
+    // check if the substring is smaller than string, if so, continue
+    if (|sub| <= |str|)
     {    
-        // get the difference of the two strings + 1 to determine the no. of iterations
-        var dif := (|str| - |sub|) + 1;
+        // store the difference of the lengths of substring and string, plus 1 (no. of iterations)
+        var diff := (|str| - |sub|) + 1;
         
+        // counter variable
         var i := 0;
-        while i < dif
+
+        // while the counter is less than the diff
+        // store the result of isPrefix with substring and a slice of string
+        // each iteration, the front of string is sliced off
+        while i < diff
         {
             res := isPrefix(sub, str[i..]);
+
+            // increment counter
             i := i + 1;
-            if res == true 
+
+            // if the result of isPrefix is true, return true
+            if (res == true) 
             {
                 return res;
             }
         }
         
     }
+    // else, return false
     res := false;
     return res;
 }
