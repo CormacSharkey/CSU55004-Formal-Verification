@@ -1,7 +1,7 @@
 method isPrefix( pre:string, str:string) returns (res:bool)
 {
     // check if the prefix is smaller than string, if so, continue
-    if(|pre| <= |str|)
+    if(|pre| <= |str| && |pre| > 1 && |str| > 1)
     {
         // store the prefix length slice of string
         var str_slice := str[0..|pre|];
