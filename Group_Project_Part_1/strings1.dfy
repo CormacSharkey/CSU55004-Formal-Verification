@@ -62,10 +62,11 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 
         // while the counter is less than the length of string1
         // store the result of isSubtring using a slice of string1 and string2
-        // iterate through slices of string1, with each sixe equal to k
+        // iterate through slices of string1, with each slice equal to k
         while i < (|str1| - k + 1)
         {
-            found := isSubstring(str1[i..i+k-1], str2);
+            // -1 might need to be added back - ask the Professor
+            found := isSubstring(str1[i..i+k], str2);
 
             // if the result is true, return true
             if (found == true)
