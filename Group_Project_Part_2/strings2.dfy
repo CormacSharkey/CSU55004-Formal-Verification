@@ -5,7 +5,7 @@ predicate isPrefixPred(pre:string, str:string)
 
 predicate isNotPrefixPred(pre:string, str:string)
 {
-	// TODO: your formula should not contain &&
+	!(|pre| <= |str|) || !(pre == str[..|pre|])
 }
 
 // Sanity check: Dafny should be able to automatically prove the following lemma
