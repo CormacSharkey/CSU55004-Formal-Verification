@@ -17,12 +17,12 @@ lemma PrefixNegationLemma(pre:string, str:string)
 
 predicate isSubstringPred(sub:string, str:string)
 {
-  //TODO
+    exists i :: (|sub|<= |str| ) &&	0<= i < ((|str|-|sub|)+1) && isPrefixPred(sub,str[i..])
 }
 
 predicate isNotSubstringPred(sub:string, str:string)
 {
-	//TODO: your FOL formula should start with a forall
+    forall i :: !((|sub|<= |str| ) &&	0<= i < ((|str| - |sub|)+1) && isPrefixPred(sub,str[i..]))
 }
 
 // Sanity check: Dafny should be able to automatically prove the following lemma
