@@ -54,13 +54,13 @@ lemma SubstringNegationLemma(sub:string, str:string)
 // Predicate to check if str1 and str2 have a common substring of length k
 predicate haveCommonKSubstringPred(k:nat, str1:string, str2:string)
 {
-    exists i, j :: (((1 <= j <= |str1|) && (1 <= j <= |str2|)) && (0 <= i < |str1| - j + 1) && (isSubstringPred(str1[i..i+j], str2)) && (|str1[i..i+j]| == k))
+    exists i, j :: (((1 <= k <= |str1|) && (1 <= k <= |str2|)) && (0 <= i  < |str1| - k + 1)  && (j == i+k) && (isSubstringPred(str1[i..j], str2)))
 }
 
 // Predicate to check if str1 and str2 do not have a common substring of length k
 predicate haveNotCommonKSubstringPred(k:nat, str1:string, str2:string)
 {
-    forall i, j :: !(((1 <= j <= |str1|) && (1 <= j <= |str2|)) && (0 <= i < |str1| - j + 1) && (isSubstringPred(str1[i..i+j], str2)) && (|str1[i..i+j]| == k))
+    forall i, j :: !(((1 <= k <= |str1|) && (1 <= k <= |str2|)) && (0 <= i < |str1| - k + 1) && (j == i+k) && (isSubstringPred(str1[i..j], str2)))
 }
 
 // Sanity check: Dafny should be able to automatically prove the following lemma
