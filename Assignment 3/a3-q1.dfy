@@ -8,10 +8,12 @@ predicate AtLeastTwice(s1: seq<int>, s2: seq<int>) {
 }
 // all numbers in s1 appear at most twice in s2
 predicate AtMostTwice(s1: seq<int>, s2: seq<int>) {
+	// At Most Twice = NOT At Least Thrice
 	forall i :: 0 <= i < |s1| ==> !(exists j :: 0 <= j < |s2| && exists k  :: j < k < |s2| && exists l  :: k < l < |s2| && s1[i] == s2[j] == s2[k] == s2[l])
 }
 // all numbers in s1 appear exactly twice in s2
 predicate ExactlyTwice(s1: seq<int>, s2: seq<int>) {
+	// The intersection of At Most Twice and At Least Twice is Exactly Twice
 	AtLeastTwice(s1, s2) && AtMostTwice(s1, s2)
 }
 // all numbers in s1, if they do not appear in s2, then they also do not appear in s3
