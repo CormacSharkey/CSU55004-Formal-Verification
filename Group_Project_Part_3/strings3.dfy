@@ -19,7 +19,32 @@ method isPrefix(pre: string, str: string) returns (res:bool)
 	ensures !res <==> isNotPrefixPred(pre,str)
 	ensures  res <==> isPrefixPred(pre,str)
 {
-//TODO: insert your code here
+	// assert (|pre| <= |str| && |pre| >= 1 && |str| >= 1 && pre == str[..|pre|]) ==> (isPrefixPred(pre, str) && !isNotPrefixPred(pre, str)) 
+    // && (!(|pre| <= |str| && |pre| >= 1 && |str| >= 1 && pre == str[..|pre|]) ==> (!isPrefixPred(pre, str) && isNotPrefixPred(pre, str)));
+
+	assert (( |pre| <= |str| && pre == str[..|pre|])==>(!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str))) &&
+	 (!(|pre| <= |str| && pre == str[..|pre|]) ==> !((!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str)))) ;
+	res:= false;
+	// check if the prefix is smaller than string, if so, continue
+	assert ((|pre| <= |str|  && pre == str[..|pre|])==>(!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str))) 
+	&& (!(|pre| <= |str| && pre == str[..|pre|]) ==> (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str))) ;
+
+	if(|pre| <= |str| && pre == str[..|pre|])
+    {
+        // store the prefix length slice of string
+		assert (!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str)) ;
+        res := true;
+		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
+
+	}
+	else {
+		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
+		res := res;
+		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
+
+	}
+	assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
+	return res;
 }
 predicate isSubstringPred(sub:string, str:string)
 {
@@ -40,8 +65,48 @@ method isSubstring(sub: string, str: string) returns (res:bool)
 	ensures  res <==> isSubstringPred(sub, str)
 	//ensures !res <==> isNotSubstringPred(sub, str) // This postcondition follows from the above lemma.
 {
-//TODO: insert your code here
-}
+ // check if the substring is smaller than string, if so, continue
+	res:=false;
+    if (|sub| <= |str|)
+    {    
+        // store the difference of the lengths of substring and string, plus 1 (no. of iterations)
+        var diff := (|str| - |sub|) + 1;
+        
+        // counter variable
+        var i := 0;
+        // while the counter is less than the diff
+        // store the result of isPrefix with substring and a slice of string
+        // each iteration, the front of string is sliced off
+        while i < diff
+		invariant i <=diff
+        {
+            res := isPrefix(sub, str[i..]);
+
+            // increment counter
+            i := i + 1;
+
+            // if the result of isPrefix is true, return true
+            if (res == true) 
+            {
+                return;
+            }
+			assert ((i<= diff) && (res <==> isSubstringPred(sub, str)));
+        }
+		assert ((i<= diff) && (res <==> isSubstringPred(sub, str))) && !( i < diff) ;
+		assert ((i== diff) && (res <==> isSubstringPred(sub, str)))  ;
+		assert res <==> isSubstringPred(sub, str);
+
+    }
+	else{
+    // else, return false
+	assert res <==> isSubstringPred(sub, str);
+    res := res;
+	assert res <==> isSubstringPred(sub, str);
+	}
+	
+	assert res <==> isSubstringPred(sub, str);
+    return;
+	}
 
 
 predicate haveCommonKSubstringPred(k:nat, str1:string, str2:string)
@@ -63,7 +128,33 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 	ensures found  <==>  haveCommonKSubstringPred(k,str1,str2)
 	//ensures !found <==> haveNotCommonKSubstringPred(k,str1,str2) // This postcondition follows from the above lemma.
 {
-//TODO: insert your code here
+// if the length of string1 and string 2 is less than k and k is greater than 0, continue
+    if (k <= |str1|) && ( k <= |str2|) && (k >= 1)
+    {
+        // counter variable
+        var i := 0;
+
+        // while the counter is less than the length of string1
+        // store the result of isSubtring using a slice of string1 and string2
+        // iterate through slices of string1, with each slice equal to k
+        while i < (|str1| - k + 1)
+        {
+            // -1 might need to be added back - ask the Professor
+            found := isSubstring(str1[i..i+k], str2);
+
+            // if the result is true, return true
+            if (found == true)
+            {
+                return;
+            }
+
+            // increment the counter
+            i := i + 1;
+        } 
+    }
+    // else, return false
+    found := false;
+    return;
 }
 
 method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
@@ -71,7 +162,27 @@ method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
 	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
 	ensures haveCommonKSubstringPred(len,str1,str2)
 {
-//TODO: insert your code here
-}
+// flag and size of string1 vars
+    var flag := true;
+    var size := |str1|;
+
+    // while the size is greater than -1
+    while (size >= 0)
+    {
+        // set flag as the result of haveCommonKSubstring call with size parameter
+        flag := haveCommonKSubstring(size,str1, str2);
+
+        // if flag is true, return true
+        if (flag == true) {
+            len := size;
+            return;
+        }
+        //decrement the size
+        size := size - 1;
+    }
+    // else, return 0 (no common string)
+    len := 0;
+    return;
+	}
 
 
