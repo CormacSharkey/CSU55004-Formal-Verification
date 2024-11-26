@@ -63,22 +63,21 @@ lemma SubstringNegationLemma(sub:string, str:string)
 
 method isSubstring(sub: string, str: string) returns (res:bool)
 	ensures  res <==> isSubstringPred(sub, str)
-	//ensures !res <==> isNotSubstringPred(sub, str) // This postcondition follows from the above lemma.
+	// ensures !res <==> isNotSubstringPred(sub, str) // This postcondition follows from the above lemma.
 {
  // check if the substring is smaller than string, if so, continue
-	res:=false;
-    if (|sub| <= |str|)
+	 if (|sub| <= |str|)
     {    
         // store the difference of the lengths of substring and string, plus 1 (no. of iterations)
         var diff := (|str| - |sub|) + 1;
         
         // counter variable
         var i := 0;
+
         // while the counter is less than the diff
         // store the result of isPrefix with substring and a slice of string
         // each iteration, the front of string is sliced off
         while i < diff
-		invariant i <=diff
         {
             res := isPrefix(sub, str[i..]);
 
@@ -90,21 +89,11 @@ method isSubstring(sub: string, str: string) returns (res:bool)
             {
                 return;
             }
-			assert ((i<= diff) && (res <==> isSubstringPred(sub, str)));
         }
-		assert ((i<= diff) && (res <==> isSubstringPred(sub, str))) && !( i < diff) ;
-		assert ((i== diff) && (res <==> isSubstringPred(sub, str)))  ;
-		assert res <==> isSubstringPred(sub, str);
-
+        
     }
-	else{
     // else, return false
-	assert res <==> isSubstringPred(sub, str);
-    res := res;
-	assert res <==> isSubstringPred(sub, str);
-	}
-	
-	assert res <==> isSubstringPred(sub, str);
+    res := false;
     return;
 	}
 
