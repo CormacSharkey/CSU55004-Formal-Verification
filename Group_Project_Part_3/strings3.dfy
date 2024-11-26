@@ -65,37 +65,48 @@ method isSubstring(sub: string, str: string) returns (res:bool)
 	ensures  res <==> isSubstringPred(sub, str)
 	// ensures !res <==> isNotSubstringPred(sub, str) // This postcondition follows from the above lemma.
 {
- // check if the substring is smaller than string, if so, continue
-	 if (|sub| <= |str|)
-    {    
-        // store the difference of the lengths of substring and string, plus 1 (no. of iterations)
-        var diff := (|str| - |sub|) + 1;
-        
-        // counter variable
-        var i := 0;
+		// assert  ((false == false) ==> isNotSubstringPred(sub, str)) && (0 < |str|);
 
-        // while the counter is less than the diff
-        // store the result of isPrefix with substring and a slice of string
-        // each iteration, the front of string is sliced off
-        while i < diff
-        {
-            res := isPrefix(sub, str[i..]);
+	// var diff := (|str| - |sub|) + 1;
+	// var diff := |str|;
+	res := false;
+	// assert  ((res == false) ==> isNotSubstringPred(sub, str)) && (0 < |str|);
 
-            // increment counter
-            i := i + 1;
+	var i := 0;
+	// diff := 1
+	var yes := false;
+	assert  ((res == false) ==> isNotSubstringPred(sub, str)) && (i < |str|);
+	while i < |str|
+	invariant i <= |str|
+	// invariant i >= 0
+	invariant (res == false) ==> (isNotSubstringPred(sub, str))
+	{
+		yes := isPrefix(sub, str[i..]);
 
-            // if the result of isPrefix is true, return true
-            if (res == true) 
-            {
-                return;
-            }
-        }
-        
-    }
-    // else, return false
-    res := false;
-    return;
+		i := i + 1;
+
+		if (yes == true) 
+		{
+			// assert (i-1 <= |str| && true <==> isSubstringPred(sub, str));
+			res := true;
+			// assert (i-1 <= |str| && res <==> isSubstringPred(sub, str));
+		}
+
+		else {
+			// assert (i-1 <= |str| && res <==> isSubstringPred(sub, str));
+			res := res;
+			// assert (i-1 <= |str| && res <==> isSubstringPred(sub, str));
+
+		}
+		// assert (i <= |str| && res <==> isSubstringPred(sub, str));
 	}
+	// if (yes == 1){
+	// 	res:=true;
+	// }
+	// assert (i-1 <= |str|) && (res = false ==> isPref) && !(i <= |str|);
+	// assert res <==> isSubstringPred(sub, str);
+    return res;
+}
 
 
 predicate haveCommonKSubstringPred(k:nat, str1:string, str2:string)
