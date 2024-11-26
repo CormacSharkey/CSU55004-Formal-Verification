@@ -48,12 +48,12 @@ method isPrefix(pre: string, str: string) returns (res:bool)
 }
 predicate isSubstringPred(sub:string, str:string)
 {
-	(exists i :: 0 <= i <= |str| &&  isPrefixPred(sub, str[i..]))
+	(exists i :: 0 <= i < |str| &&  isPrefixPred(sub, str[i..]))
 }
 
 predicate isNotSubstringPred(sub:string, str:string)
 {
-	(forall i :: 0 <= i <= |str| ==> isNotPrefixPred(sub,str[i..]))
+	(forall i :: 0 <= i < |str| ==> isNotPrefixPred(sub,str[i..]))
 }
 
 lemma SubstringNegationLemma(sub:string, str:string)
@@ -65,46 +65,39 @@ method isSubstring(sub: string, str: string) returns (res:bool)
 	ensures  res <==> isSubstringPred(sub, str)
 	// ensures !res <==> isNotSubstringPred(sub, str) // This postcondition follows from the above lemma.
 {
-		// assert  ((false == false) ==> isNotSubstringPred(sub, str)) && (0 < |str|);
-
-	// var diff := (|str| - |sub|) + 1;
-	// var diff := |str|;
 	res := false;
-	// assert  ((res == false) ==> isNotSubstringPred(sub, str)) && (0 < |str|);
-
 	var i := 0;
-	// diff := 1
 	var yes := false;
-	assert  ((res == false) ==> isNotSubstringPred(sub, str)) && (i < |str|);
+
+	// assert
+
 	while i < |str|
 	invariant i <= |str|
-	// invariant i >= 0
-	invariant (res == false) ==> (isNotSubstringPred(sub, str))
+	invariant ((res==false) ==> isNotSubstringPred(sub, str))
 	{
+
 		yes := isPrefix(sub, str[i..]);
-
-		i := i + 1;
-
+		// assert ((yes == true) ==> (i+1 <= |str|)) && ((yes == false) ==> ((i+1 <= |str|) && ((res == true) ==> isSubstringPred(sub, str))));
 		if (yes == true) 
 		{
-			// assert (i-1 <= |str| && true <==> isSubstringPred(sub, str));
+			// assert (i+1 <= |str|);
+			// assert ((i+1 <= |str|) && (true));
+			// assert ((i+1 <= |str|) && ((true == false) ==> isNotSubstringPred(sub, str)));
 			res := true;
-			// assert (i-1 <= |str| && res <==> isSubstringPred(sub, str));
+			// assert ((i+1 <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)));
 		}
 
 		else {
-			// assert (i-1 <= |str| && res <==> isSubstringPred(sub, str));
+			// assert ((i+1 <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)));
 			res := res;
-			// assert (i-1 <= |str| && res <==> isSubstringPred(sub, str));
-
+			// assert ((i+1 <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)));
 		}
-		// assert (i <= |str| && res <==> isSubstringPred(sub, str));
+		// assert ((i+1 <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)));
+		i := i + 1;
+		// assert ((i <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)));
 	}
-	// if (yes == 1){
-	// 	res:=true;
-	// }
-	// assert (i-1 <= |str|) && (res = false ==> isPref) && !(i <= |str|);
-	// assert res <==> isSubstringPred(sub, str);
+	// assert ((i <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)) && !(i < |str|));
+	// assert ((res == false) ==> isNotSubstringPred(sub, str)) && (i == |str|);
     return res;
 }
 
