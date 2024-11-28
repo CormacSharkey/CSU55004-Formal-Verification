@@ -143,11 +143,14 @@ method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
 	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
 	ensures haveCommonKSubstringPred(len,str1,str2)
 {
-    var size := |str1|;
+    var size := 0;
 	len := 0;
 
-    while (size >= 0)
-	invariant -1 <= size <= |str1|
+    while (size <= |str1|)
+	invariant 0 <= size <= |str1| + 1
+	invariant (len > 0 ) ==> (haveCommonKSubstringPred(len,str1,str2))
+	invariant (len == 0) ==> (forall k :: 0 <= k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
+	// invariant (len == 0) <==> !flag
     {
         var flag := haveCommonKSubstring(size,str1, str2);
 
@@ -157,7 +160,7 @@ method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
 		else {
 			len := len;
 		}
-        size := size - 1;
+        size := size + 1;
     }
 	return len;
 }
