@@ -114,32 +114,33 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 	ensures !found <==> haveNotCommonKSubstringPred(k,str1,str2) // This postcondition follows from the above lemma.
 {
 // if the length of string1 and string 2 is less than k and k is greater than 0, continue
+	found := false;
     if (k <= |str1|) && ( k <= |str2|) && (k >= 1)
     {
-        // counter variable
         var i := 0;
 
-        // while the counter is less than the length of string1
-        // store the result of isSubtring using a slice of string1 and string2
-        // iterate through slices of string1, with each slice equal to k
-        while i < (|str1| - k + 1)
+        while i <= (|str1| - k )
+		// invariant 0 <= i <= |str1| -k +2
+		invariant !found <==> (forall i1, j1 :: 0 <= i1 < i <= |str1|- k  && j1 == i1 + k ==>  isNotSubstringPred(str1[i1..j1],str2))
+		invariant found <==> (exists i1, j1 :: 0 <= i1 < i <= |str1|- k  && j1 == i1 + k && isSubstringPred(str1[i1..j1],str2))
         {
             // -1 might need to be added back - ask the Professor
-            found := isSubstring(str1[i..i+k], str2);
+            var yes := isSubstring(str1[i..i+k], str2);
 
             // if the result is true, return true
-            if (found == true)
+            if (yes == true)
             {
-                return;
-            }
+                found := true;
+            }else{
+				found := found;
+			}
 
             // increment the counter
             i := i + 1;
         } 
     }
     // else, return false
-    found := false;
-    return;
+    return found;
 }
 
 method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
