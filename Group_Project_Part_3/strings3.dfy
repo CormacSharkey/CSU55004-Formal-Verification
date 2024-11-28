@@ -113,33 +113,28 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 	ensures found  <==>  haveCommonKSubstringPred(k,str1,str2)
 	ensures !found <==> haveNotCommonKSubstringPred(k,str1,str2) // This postcondition follows from the above lemma.
 {
-// if the length of string1 and string 2 is less than k and k is greater than 0, continue
 	found := false;
-    if (k <= |str1|) && ( k <= |str2|) && (k >= 1)
+
+    if (k <= |str1|) && ( k <= |str2|) && (k >= 0)
     {
         var i := 0;
 
-        while i <= (|str1| - k )
-		// invariant 0 <= i <= |str1| -k +2
-		invariant !found <==> (forall i1, j1 :: 0 <= i1 < i <= |str1|- k  && j1 == i1 + k ==>  isNotSubstringPred(str1[i1..j1],str2))
-		invariant found <==> (exists i1, j1 :: 0 <= i1 < i <= |str1|- k  && j1 == i1 + k && isSubstringPred(str1[i1..j1],str2))
+        while i <= (|str1| - k)
+		invariant 0 <= i <= |str1| - k + 1
+		invariant found <==> (exists i1, j1 :: 0 <= i1 < i <= |str1|- k+1 && j1 == i1 + k && isSubstringPred(str1[i1..j1],str2))
+		invariant !found <==> (forall i1, j1 :: 0 <= i1 < i <= |str1|- k+1  && j1 == i1 + k ==>  isNotSubstringPred(str1[i1..j1],str2))
         {
-            // -1 might need to be added back - ask the Professor
             var yes := isSubstring(str1[i..i+k], str2);
 
-            // if the result is true, return true
             if (yes == true)
             {
                 found := true;
             }else{
 				found := found;
 			}
-
-            // increment the counter
             i := i + 1;
         } 
     }
-    // else, return false
     return found;
 }
 
@@ -148,27 +143,21 @@ method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
 	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
 	ensures haveCommonKSubstringPred(len,str1,str2)
 {
-// flag and size of string1 vars
-    var flag := true;
     var size := |str1|;
+	len := 0;
 
-    // while the size is greater than -1
     while (size >= 0)
+	invariant -1 <= size <= |str1|
     {
-        // set flag as the result of haveCommonKSubstring call with size parameter
-        flag := haveCommonKSubstring(size,str1, str2);
+        var flag := haveCommonKSubstring(size,str1, str2);
 
-        // if flag is true, return true
         if (flag == true) {
             len := size;
-            return;
         }
-        //decrement the size
+		else {
+			len := len;
+		}
         size := size - 1;
     }
-    // else, return 0 (no common string)
-    len := 0;
-    return;
-	}
-
-
+	return len;
+}
