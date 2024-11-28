@@ -19,13 +19,12 @@ method isPrefix(pre: string, str: string) returns (res:bool)
 	ensures !res <==> isNotPrefixPred(pre,str)
 	ensures  res <==> isPrefixPred(pre,str)
 {
-	// assert (|pre| <= |str| && |pre| >= 1 && |str| >= 1 && pre == str[..|pre|]) ==> (isPrefixPred(pre, str) && !isNotPrefixPred(pre, str)) 
-    // && (!(|pre| <= |str| && |pre| >= 1 && |str| >= 1 && pre == str[..|pre|]) ==> (!isPrefixPred(pre, str) && isNotPrefixPred(pre, str)));
 
 	assert (( |pre| <= |str| && pre == str[..|pre|])==>(!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str))) &&
 	 (!(|pre| <= |str| && pre == str[..|pre|]) ==> !((!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str)))) ;
+
 	res:= false;
-	// check if the prefix is smaller than string, if so, continue
+	
 	assert ((|pre| <= |str|  && pre == str[..|pre|])==>(!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str))) 
 	&& (!(|pre| <= |str| && pre == str[..|pre|]) ==> (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str))) ;
 
@@ -33,27 +32,33 @@ method isPrefix(pre: string, str: string) returns (res:bool)
     {
         // store the prefix length slice of string
 		assert (!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str)) ;
-        res := true;
+        
+		res := true;
+		
 		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
 
 	}
 	else {
 		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
+		
 		res := res;
+		
 		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
 
 	}
+	
 	assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
+	
 	return res;
 }
 predicate isSubstringPred(sub:string, str:string)
 {
-	(exists i :: 0 <= i < |str| &&  isPrefixPred(sub, str[i..]))
+	(exists i :: 0 <= i <= |str| &&  isPrefixPred(sub, str[i..]))
 }
 
 predicate isNotSubstringPred(sub:string, str:string)
 {
-	(forall i :: 0 <= i < |str| ==> isNotPrefixPred(sub,str[i..]))
+	(forall i :: 0 <= i <= |str| ==> isNotPrefixPred(sub,str[i..]))
 }
 
 lemma SubstringNegationLemma(sub:string, str:string)
@@ -63,41 +68,28 @@ lemma SubstringNegationLemma(sub:string, str:string)
 
 method isSubstring(sub: string, str: string) returns (res:bool)
 	ensures  res <==> isSubstringPred(sub, str)
-	// ensures !res <==> isNotSubstringPred(sub, str) // This postcondition follows from the above lemma.
+	ensures !res <==> isNotSubstringPred(sub, str) // This postcondition follows from the above lemma.
 {
 	res := false;
 	var i := 0;
-	var yes := false;
 
-	// assert
-
-	while i < |str|
-	invariant i <= |str|
-	invariant ((res==false) ==> isNotSubstringPred(sub, str))
+	while i <= |str|
+	invariant 0 <= i <= |str| + 1
+	invariant res <==> (exists j :: 0 <= j < i <= |str|+1 && isPrefixPred(sub, str[j..]))
+	invariant !res <==> (forall j :: 0 <= j < i <= |str|+1 ==> isNotPrefixPred(sub, str[j..]))
 	{
 
-		yes := isPrefix(sub, str[i..]);
-		// assert ((yes == true) ==> (i+1 <= |str|)) && ((yes == false) ==> ((i+1 <= |str|) && ((res == true) ==> isSubstringPred(sub, str))));
+		var yes := isPrefix(sub, str[i..]);
 		if (yes == true) 
 		{
-			// assert (i+1 <= |str|);
-			// assert ((i+1 <= |str|) && (true));
-			// assert ((i+1 <= |str|) && ((true == false) ==> isNotSubstringPred(sub, str)));
 			res := true;
-			// assert ((i+1 <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)));
 		}
 
 		else {
-			// assert ((i+1 <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)));
 			res := res;
-			// assert ((i+1 <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)));
 		}
-		// assert ((i+1 <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)));
 		i := i + 1;
-		// assert ((i <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)));
 	}
-	// assert ((i <= |str|) && ((res == false) ==> isNotSubstringPred(sub, str)) && !(i < |str|));
-	// assert ((res == false) ==> isNotSubstringPred(sub, str)) && (i == |str|);
     return res;
 }
 
@@ -119,7 +111,7 @@ lemma commonKSubstringLemma(k:nat, str1:string, str2:string)
 
 method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: bool)
 	ensures found  <==>  haveCommonKSubstringPred(k,str1,str2)
-	//ensures !found <==> haveNotCommonKSubstringPred(k,str1,str2) // This postcondition follows from the above lemma.
+	ensures !found <==> haveNotCommonKSubstringPred(k,str1,str2) // This postcondition follows from the above lemma.
 {
 // if the length of string1 and string 2 is less than k and k is greater than 0, continue
     if (k <= |str1|) && ( k <= |str2|) && (k >= 1)
