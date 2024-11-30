@@ -21,33 +21,30 @@ method isPrefix(pre: string, str: string) returns (res:bool)
 {
 
 	assert (( |pre| <= |str| && pre == str[..|pre|])==>(!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str))) &&
-	 (!(|pre| <= |str| && pre == str[..|pre|]) ==> !((!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str)))) ;
+	 (!(|pre| <= |str| && pre == str[..|pre|]) ==> !((!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str))));
 
 	res:= false;
 	
 	assert ((|pre| <= |str|  && pre == str[..|pre|])==>(!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str))) 
-	&& (!(|pre| <= |str| && pre == str[..|pre|]) ==> (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str))) ;
+	&& (!(|pre| <= |str| && pre == str[..|pre|]) ==> (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)));
 
 	if(|pre| <= |str| && pre == str[..|pre|])
     {
-        // store the prefix length slice of string
-		assert (!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str)) ;
+		assert (!true <==> isNotPrefixPred(pre,str)) && (true <==> isPrefixPred(pre,str));
         
 		res := true;
 		
-		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
-
+		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str));
 	}
 	else {
-		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
+		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str));
 		
 		res := res;
 		
-		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
-
+		assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str));
 	}
 	
-	assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str)) ;
+	assert (!res <==> isNotPrefixPred(pre,str)) && (res <==> isPrefixPred(pre,str));
 	
 	return res;
 }
@@ -78,13 +75,11 @@ method isSubstring(sub: string, str: string) returns (res:bool)
 	invariant res <==> (exists j :: 0 <= j < i <= |str|+1 && isPrefixPred(sub, str[j..]))
 	invariant !res <==> (forall j :: 0 <= j < i <= |str|+1 ==> isNotPrefixPred(sub, str[j..]))
 	{
-
 		var yes := isPrefix(sub, str[i..]);
 		if (yes == true) 
 		{
 			res := true;
 		}
-
 		else {
 			res := res;
 		}
@@ -114,7 +109,6 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 	ensures !found <==> haveNotCommonKSubstringPred(k,str1,str2) // This postcondition follows from the above lemma.
 {
 	found := false;
-
     if (k <= |str1|) && ( k <= |str2|) && (k >= 0)
     {
         var i := 0;
@@ -129,7 +123,8 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
             if (yes == true)
             {
                 found := true;
-            }else{
+            }
+			else{
 				found := found;
 			}
             i := i + 1;
@@ -158,7 +153,6 @@ method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
 	invariant (exists i1, j1 :: 0 <= i1 <= |str1|- len && j1 == i1 + len && isSubstringPred(str1[i1..j1],str2))
 	invariant (forall k :: len < k < size <= |str1|+1 ==> !haveCommonKSubstringPred(k,str1,str2))
     {
-		
         var flag := haveCommonKSubstring(size,str1, str2);
 
         if (flag == true) {
