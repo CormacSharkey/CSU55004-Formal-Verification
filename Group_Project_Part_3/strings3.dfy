@@ -138,6 +138,12 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
     return found;
 }
 
+lemma haveCommon0SubstringLemma(str1:string, str2:string)
+    ensures  haveCommonKSubstringPred(0,str1,str2)
+{
+    assert isPrefixPred(str1[0..0], str2[0..]);
+}
+
 method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
 	requires (|str1| <= |str2|)
 	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
@@ -145,13 +151,14 @@ method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
 {
     var size := 0;
 	len := 0;
+    haveCommon0SubstringLemma(str1, str2);
 
     while (size <= |str1|)
 	invariant 0 <= size <= |str1| + 1
-	invariant (len > 0 ) ==> (haveCommonKSubstringPred(len,str1,str2))
-	invariant (len == 0) ==> (forall k :: 0 <= k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
-	// invariant (len == 0) <==> !flag
+	invariant (exists i1, j1 :: 0 <= i1 <= |str1|- len && j1 == i1 + len && isSubstringPred(str1[i1..j1],str2))
+	invariant (forall k :: len < k < size <= |str1|+1 ==> !haveCommonKSubstringPred(k,str1,str2))
     {
+		
         var flag := haveCommonKSubstring(size,str1, str2);
 
         if (flag == true) {
